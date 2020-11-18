@@ -1,23 +1,26 @@
 #!/usr/bin/Rscript
 #USAGE
-#source('~/rmods/my_r_modules.R')
+#------------------------------------------------------------------------------
+#source('~/rmods/rmod.R')
 #DEPENDENCIES
+#------------------------------------------------------------------------------
 library("car")
 library("lmodel2")
 library("lmtest")
 library("tidyverse")
 library(ggplot2)
 #SETTINGS
+#------------------------------------------------------------------------------
 my.par <- par(mfrow=c(2,2)) #show plots in a 2x2 window, reset with c(1,1)
 my.palette <- terrain.colors(12)
 # FUNCTIONS
-#---------------------------------------------------
+#------------------------------------------------------------------------------
 # Function to perform a komogorov test with simulated dataset v1
 komogorov.test <- function(x){
   y <- pnorm(summary(x), mean = mean(x, na.rm = TRUE), sd = sd(x, na.rm = TRUE))
   return(ks.test(x,y))
 }
-#--------------------------------------------------
+#------------------------------------------------------------------------------
 # Histogram with a normal distribution trendline v2
 # Takes a dataset and a name of dataset, default to My Histogram
 dist.line.hist <- function(x, my.name="My Histogram"){
@@ -27,7 +30,7 @@ dist.line.hist <- function(x, my.name="My Histogram"){
   yfit <- yfit*max(h$counts)/max(yfit)
   lines(xfit,yfit, col="red", lwd=2)
 }
-#--------------------------------------------------
+#------------------------------------------------------------------------------
 # Function to perform common tests of normality and review normally distributed data v2
 tests.of.normality <- function(x){
   summary(x)
