@@ -8,7 +8,6 @@ library("car")
 library("lmodel2")
 library("lmtest")
 library("tidyverse")
-library(ggplot2)
 #SETTINGS
 #------------------------------------------------------------------------------
 my.par <- par(mfrow=c(2,2)) #show plots in a 2x2 window, reset with c(1,1)
