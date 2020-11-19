@@ -59,7 +59,7 @@ tests.of.normality <- function(x){
       dist.line.hist(x[,i], colnames(x[i]))
     }
   }
-  par(mfrow=c(2,2)) #reset
+  par(my.par) #reset
 }
 #no function for getting standard error
 # so I made one :)
