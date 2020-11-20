@@ -37,7 +37,7 @@ tests.of.normality <- function(x){
   par(mfrow=c(2,3))
   # in the first case we have a column that is a factor
   if(is.factor(x[,1])){
-    for(i in 1:(length(x)-1)){
+for(i in 1:(length(x)-1)){
       cat("Test results of: ", colnames(x[i+1]), "\n ----------------- \n")
       print(shapiro.test(x[,i+1]))
       print(komogorov.test(x[,i+1]))
@@ -67,44 +67,6 @@ tests.of.normality <- function(x){
 std.err <- function(sel.col){
   sd(sel.col, na.rm=T)/sqrt(length(!is.na(sel.col)))
 }
-#---------------------------------------------------------------------------------------------------
-# general ode-solver, taking the function f(t,x) as an input parameter. 
-rm(list=ls())
-my_ode_solver <- function(f, x0, t0, t_max) {
-  delta_t <- 0.1 # fixed time-step
-  
-  # vector of t-values:
-  t <- seq(t0, t_max, by=delta_t)
-  
-  # vector of calculated solution:
-  x_solution <- rep(0, length(t))
-  
-  #  Start by setting x=x0
-  x <- x0
-  x_solution[1] <- x0
-  
-  for (ti in 2:length(t)) {
-    # Calculate dx/dt = f(t,x)
-    dxdt <- f(t[ti-1], x) # We use derivative at t-delta_t to calculate x at t
-    
-    # Calculate ??x=f(t,x)??t
-    delta_x <- dxdt*delta_t
-    
-    # Update x
-    x <- x + delta_x
-    
-    # Store solution:
-    x_solution[ti] <- x
-  }
-  
-  # return a list with t and x-values:
-  return(list(t=t, x=x_solution))
-}
 
-# Test with exponential growth:
-r <- 0.5 # exponential growth rate
-exp_growth <- function(t,x) {
-  dxdt <- r*x
-  return(dxdt)
-}
 
+    
