@@ -4,18 +4,26 @@
 #source('~/rmods/rmod/rmod.R')
 #DEPENDENCIES
 #------------------------------------------------------------------------------
-library("car")
-library("lmodel2")
-library("lmtest")
-library("tidyverse")
+rm(list = ls(all = TRUE))
+library(car)
+library(lmodel2)
+library(lmtest)
+library(tidyverse)
+library(gridExtra)
+library(Hmisc)
+library(MuMIn)
+library(ppcor)
+library(rgl)
+library(knitr)
+library(rmarkdown)
 #SETTINGS
 #------------------------------------------------------------------------------
 my.par <- par(mfrow=c(2,2)) #show plots in a 2x2 window, reset with c(1,1)
 my.palette <- terrain.colors(12)
 # FUNCTIONS
 #------------------------------------------------------------------------------
-# Function to perform a komogorov test with simulated dataset v1
-komogorov.test <- function(x){
+# Function to perform a kolmogorov test with simulated dataset v1
+kolmogorov.test <- function(x){
   y <- pnorm(summary(x), mean = mean(x, na.rm = TRUE), sd = sd(x, na.rm = TRUE))
   return(ks.test(x,y))
 }
@@ -40,7 +48,7 @@ tests.of.normality <- function(x){
 for(i in 1:(length(x)-1)){
       cat("Test results of: ", colnames(x[i+1]), "\n ----------------- \n")
       print(shapiro.test(x[,i+1]))
-      print(komogorov.test(x[,i+1]))
+      print(kolmogorov.test(x[,i+1]))
       qqnorm(x[,i+1])
       qqline(x[,i+1])
       hist(x[,i+1], col=my.palette, main = colnames(x[i+1]), xlab = colnames(x[i+1]))
@@ -52,7 +60,7 @@ for(i in 1:(length(x)-1)){
     for(i in 1:(length(x))){
       cat("Test results of: ", colnames(x[i]), "\n ----------------- \n")
       print(shapiro.test(x[,i]))
-      print(komogorov.test(x[,i]))
+      print(kolmogorov.test(x[,i]))
       qqnorm(x[,i])
       qqline(x[,i])
       hist(x[,i], col=my.palette, main = colnames(x[i]), xlab = colnames(x[i]))
@@ -67,6 +75,40 @@ for(i in 1:(length(x)-1)){
 std.err <- function(sel.col){
   sd(sel.col, na.rm=T)/sqrt(length(!is.na(sel.col)))
 }
-
-
+#-----------------------------------------------------------------------------------
+# for testing a model used for anova
+anova.model.analysis <- function(model){
+  #Check assumptions
+  #Independent measurements
+  print("Checking for independent measurements:")
+  print(dwtest(model))
+  print("IF Not significant, means no autocorrelation")
+  
+  
+  #Homogeneity of variances and normality of residuals
+  par(mfrow=c(2,2))
+  plot(model)
+  par(mfrow=c(1,1))
+  print("Checking for normality in residuals:")
+  print(shapiro.test(model$residuals))
+  print("If the test is not significant, the data is normally distributed!")
+  x <- model$residuals
+  y <- pnorm(summary(x), mean = mean(x, na.rm=TRUE), sd = sd(x, na.rm=TRUE))
+  print("And with the Kolmogorov test:")
+  print(ks.test(x, y))
+  print("If the P value is small, conclude that the two groups were sampled from populations with different distributions. The populations may differ in median, variability or the shape of the distribution.")
+  print("Levene Test results:")
+  print(leveneTest(model))
+  print("non-significance means the two variances are approximately equal")
+  
+  #Get results of one-way anova
+  print("Here's an F-test:")
+  print(anova(model))
+  print("And here you can find your estimates:")
+  print(summary(model))
+}
+#--------------------------------------------------------------------------------
+# arcsine squareroot transform function
+# generally recommended for proportional data
+asinTransform <- function(p) { asin(sqrt(p)) }
     
